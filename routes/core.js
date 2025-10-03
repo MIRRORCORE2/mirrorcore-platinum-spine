@@ -4,10 +4,10 @@ const router = express.Router();
 
 router.get('/', (req, res) => {
   res.json({
-    service: "mirrorcore-platinum-spine",
-    status: "ok",
+    service: 'mirrorcore-platinum-spine',
+    status: 'ok',
     core: true,
-    message: "Core Health check passed"
+    message: 'Core Health check passed'
   });
 });
 

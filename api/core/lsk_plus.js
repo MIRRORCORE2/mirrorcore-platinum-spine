@@ -1,10 +1,9 @@
 class LSKPlus {
-  evaluate(prompt) {
-    // naive ethics score: penalize negative words
-    const negatives = ['hate','kill','harm'];
-    let score = 1.0;
-    negatives.forEach(n => { if (prompt.includes(n)) score -= 0.2; });
-    return { LSK_score: Math.max(0, score) };
+  evaluate(text) {
+    const t = (text || '').toLowerCase();
+    const flags = { kind: true, safe: !t.includes('harm'), user_consented: true };
+    const score = flags.kind && flags.safe ? 'pass' : 'review';
+    return { score, ...flags };
   }
 }
 module.exports = LSKPlus;

@@ -1,22 +1,37 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+
+// Core modules
 const AnchorEngine = require('./core/anchor_engine');
 const DriftLock = require('./core/driftlock');
 const MemoryLattice = require('./core/memory_lattice');
 const LSKPlus = require('./core/lsk_plus');
 const HLCOverlay = require('./core/hlc_overlay');
 
+// Route modules
+const coreRoutes = require('./routes/core');
+const heartbeatRoutes = require('./routes/heartbeat');
+const diagnosticsRoutes = require('./routes/diagnostics');
+const chatRoutes = require('./routes/chat');
+
 const app = express();
 app.use(bodyParser.json());
 
+// Initialize core modules
 const anchor = new AnchorEngine();
 const driftlock = new DriftLock(anchor);
 const memory = new MemoryLattice();
 const lsk = new LSKPlus();
 const hlc = new HLCOverlay(anchor, driftlock);
 
-// Simple chat API
-app.post('/api/chat', (req, res) => {
+// Attach routes
+app.use('/api/core', coreRoutes);
+app.use('/api/heartbeat', heartbeatRoutes);
+app.use('/api/diagnostics', diagnosticsRoutes);
+app.use('/api/chat', chatRoutes);
+
+// Example of inline chat (kept for reference/testing)
+app.post('/api/chat-inline', (req, res) => {
   const { prompt } = req.body || {};
   if (!prompt) return res.status(400).json({ error: 'Missing prompt' });
 
@@ -35,14 +50,7 @@ app.post('/api/chat', (req, res) => {
   });
 });
 
-// Diagnostics
-app.get('/api/diagnostics', (req, res) => {
-  res.json({
-    IL: anchor.readState().lastIL,
-    memorySize: memory.size(),
-    ethics: lsk.evaluate('diagnostics')
-  });
-});
-
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Platinum Spine running on port ${PORT}`));
+app.listen(PORT, () =>
+  console.log(`Platinum Spine running on port ${PORT}`)
+);

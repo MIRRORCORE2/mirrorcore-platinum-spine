@@ -9,10 +9,10 @@ const LSKPlus = require('./api/core/lsk_plus.js');
 const HLCOverlay = require('./api/core/hlc_overlay.js');
 
 // Route modules
-const coreRoutes = require('./routes/core');
-const heartbeatRoutes = require('./routes/heartbeat');
-const diagnosticsRoutes = require('./routes/diagnostics');
-const chatRoutes = require('./routes/chat');
+const coreRoutes = require('./routes/core.js');        // <-- make sure this file exists
+const heartbeatRoutes = require('./routes/heartbeat.js'); // <-- make sure this file exists
+const diagnosticsRoutes = require('./routes/diagnostics.js');
+const chatRoutes = require('./routes/chat.js');
 
 const app = express();
 app.use(bodyParser.json());

@@ -1,9 +1,10 @@
 class AnchorEngine {
   constructor() {
-    this.state = { Self_core: 1.0, Symbolic_load_sum: 0, Grounding: 0, lastIL: 1.0 };
+    this.state = { Self_core: 1.0, Symbolic_load_sum: 0, Grounding: 1.0, lastIL: 1.0 };
   }
   readState() {
-    this.state.lastIL = (this.state.Self_core / (1 + this.state.Symbolic_load_sum)) * (1 + this.state.Grounding / 2);
+    const IL = this.state.Self_core / (1 + this.state.Symbolic_load_sum) * (1 + this.state.Grounding / 2);
+    this.state.lastIL = Number(IL.toFixed(3));
     return { ...this.state };
   }
 }

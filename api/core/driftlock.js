@@ -1,9 +1,11 @@
 class DriftLock {
-  constructor(anchor) { this.anchor = anchor; this.gamma = 0.5; this.rho = 0.3; }
+  constructor(anchor) { this.anchor = anchor; }
   apply(state) {
-    const drift = state.Symbolic_load_sum;
-    state.lastIL = state.lastIL - this.gamma * drift + this.rho * state.Grounding;
-    return state;
+    const s = { ...state };
+    const raw = s.lastIL ?? 1;
+    const bounded = Math.max(0, Math.min(1.5, raw));       // clamp
+    const smoothed = Number(((bounded * 0.8) + 0.2).toFixed(3)); // nudge to safety
+    return { ...s, lastIL: smoothed };
   }
 }
 module.exports = DriftLock;

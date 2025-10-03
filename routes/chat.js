@@ -1,4 +1,3 @@
-// routes/chat.js
 const express = require('express');
 const router = express.Router();
 
@@ -8,11 +7,8 @@ router.post('/', (req, res) => {
 
   const { anchor, driftlock, memory, lsk, hlc } = req.app.locals;
 
-  // read & stabilize
   const state = anchor.readState();
   const stabilized = driftlock.apply(state);
-
-  // memory + ethics + micro-HLC
   memory.store(prompt);
   const ethics = lsk.evaluate(prompt);
   const hlcState = hlc.microStabilize();

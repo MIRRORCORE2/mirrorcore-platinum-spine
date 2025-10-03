@@ -1,96 +1,47 @@
 // routes/chat.js
-const express = require("express");
+const express = require('express');
 const router = express.Router();
-const { v4: uuid } = require("uuid");
-const fs = require("fs");
-const path = require("path");
 
-// These are wired in server.js via app.locals
+// Pull in core modules from app.locals
 function requireCtx(req) {
-  const { anchor, driftLock, lattice, lsk, overlay } = req.app.locals;
-  if (!anchor || !driftLock || !lattice || !lsk || !overlay) {
-    throw new Error("MirrorCore context not initialized");
-  }
-  return { anchor, driftLock, lattice, lsk, overlay };
+  const { anchor, driftlock, memory, lsk, hlc } = req.app.locals;
+  return { anchor, driftlock, memory, lsk, hlc };
 }
 
-const ARTIFACT_DIR = path.join(process.cwd(), "artifacts");
-if (!fs.existsSync(ARTIFACT_DIR)) fs.mkdirSync(ARTIFACT_DIR, { recursive: true });
-
-router.post("/chat", async (req, res) => {
-  const id = uuid();
-  const t0 = Date.now();
+// POST /api/chat
+router.post('/', async (req, res) => {
   try {
-    const { anchor, driftLock, lattice, lsk, overlay } = requireCtx(req);
-    const { message, userId = "anon", meta = {} } = req.body || {};
+    const { anchor, driftlock, memory, lsk, hlc } = requireCtx(req);
+    const { prompt } = req.body || {};
 
-    if (!message || typeof message !== "string") {
-      return res.status(400).json({ error: "message (string) is required" });
+    if (!prompt) {
+      return res.status(400).json({ error: 'Missing prompt' });
     }
 
-    // 1) Anchor → normalize input & attach session context
-    const anchored = anchor.normalize({ text: message, userId, meta });
+    // Run through stabilizers
+    const state = anchor.readState();
+    const stabilized = driftlock.apply(state);
 
-    // 2) Memory lattice → retrieve relevant prior facts
-    const mem = await lattice.retrieve({ userId, query: anchored.text });
+    // Store input in memory
+    memory.store(prompt);
 
-    // 3) Draft reply (placeholder: echo with light transformation)
-    let draft = `You said: ${anchored.text}`;
-    if (mem && mem.hits?.length) {
-      draft += `\n\n(Recall: ${mem.hits.slice(0, 2).map(h => h.note).join(" | ")})`;
-    }
+    // Ethics check (LSK+)
+    const ethics = lsk.evaluate(prompt);
 
-    // 4) Apply DriftLock pass (safety & coherence guardrail)
-    const locked = driftLock.review({
-      input: anchored.text,
-      draft,
-      context: { userId, mem }
-    });
+    // HLC micro-stabilizer
+    const hlcState = hlc.microStabilize();
 
-    // 5) Ethical overlay (LSK+ lightweight heuristic)
-    const ethics = lsk.evaluate({
-      text: locked.text,
-      userId,
-      context: mem?.profile || {}
-    });
-
-    // 6) Final overlay (HLC overlay can tag or style the reply)
-    const finalText = overlay.render({
-      text: locked.text,
-      tags: ethics.tags,
-      score: ethics.score
-    });
-
-    // 7) Persist conversation shard
-    await lattice.store({
-      userId,
-      turnId: id,
-      input: anchored.text,
-      output: finalText,
-      tags: ethics.tags,
-      ts: Date.now()
-    });
-
-    // 8) Write minimal artifact (for debugging / audits)
-    const record = {
-      id,
-      userId,
-      t0,
-      t1: Date.now(),
-      input: anchored.text,
-      output: finalText,
-      ethics
-    };
-    fs.writeFileSync(path.join(ARTIFACT_DIR, `chat_${id}.json`), JSON.stringify(record, null, 2));
-
-    return res.json({
-      id,
-      output: finalText,
+    // Return response
+    res.json({
+      input: prompt,
+      IL: stabilized.lastIL,
       ethics,
-      latency_ms: record.t1 - t0
+      memorySize: memory.size(),
+      hlcState
     });
   } catch (err) {
-    return res.status(500).json({ error: err.message || "internal_error" });
+    console.error('Chat error:', err);
+    res.status(500).json({ error: 'Chat processing failed' });
   }
 });
 

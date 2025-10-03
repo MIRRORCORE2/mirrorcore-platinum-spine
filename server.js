@@ -2,11 +2,11 @@ const express = require('express');
 const bodyParser = require('body-parser');
 
 // Core modules
-const AnchorEngine = require('./core/anchor_engine');
-const DriftLock = require('./core/driftlock');
-const MemoryLattice = require('./core/memory_lattice');
-const LSKPlus = require('./core/lsk_plus');
-const HLCOverlay = require('./core/hlc_overlay');
+const AnchorEngine = require('./core/anchor_engine.js');
+const DriftLock = require('./core/driftlock.js');
+const MemoryLattice = require('./core/memory_lattice.js');
+const LSKPlus = require('./core/lsk_plus.js');
+const HLCOverlay = require('./core/hlc_overlay.js');
 
 // Route modules
 const coreRoutes = require('./routes/core');

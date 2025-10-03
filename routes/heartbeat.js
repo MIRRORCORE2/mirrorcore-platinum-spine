@@ -1,12 +1,12 @@
-// routes/heartbeat.js
 const express = require('express');
 const router = express.Router();
 
 router.get('/', (req, res) => {
+  const { anchor } = req.app.locals;
   res.json({
-    heartbeat: "💓",
-    status: "alive",
-    timestamp: Date.now()
+    alive: true,
+    ts: Date.now(),
+    IL: anchor?.readState()?.lastIL ?? null
   });
 });
 

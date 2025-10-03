@@ -1,4 +1,3 @@
-// routes/diagnostics.js
 const express = require('express');
 const os = require('os');
 const router = express.Router();
@@ -18,7 +17,7 @@ router.get('/', (req, res) => {
       driftlock: Boolean(driftlock),
       memory: Boolean(memory),
       lsk: Boolean(lsk),
-      hlc: Boolean(hlc)
+      hlc: Boolean(hlc),
     },
     IL: anchor?.readState()?.lastIL ?? null
   });

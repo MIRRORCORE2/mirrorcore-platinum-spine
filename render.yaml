@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: mirrorcore-platinum-spine
+    env: node
+    plan: free
+    region: oregon
+    branch: main
+    buildCommand: npm install
+    startCommand: node server.js
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MIRRORCORE_SECRET
+        generateValue: true
+      # If you later connect to a provider, uncomment:
+      # - key: OPENAI_API_KEY
+      #   sync: false
+    headers:
+      - path: /*
+        name: Cache-Control
+        value: no-store

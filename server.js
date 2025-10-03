@@ -56,7 +56,11 @@ app.post('/api/chat-inline', (req, res) => {
     hlcState
   });
 });
-
+app.get('/', (req, res) => {
+  res.send(
+    'MirrorCore Platinum is online. Try /api/core, /api/diagnostics, /api/heartbeat, or POST /api/chat'
+  );
+});
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () =>
   console.log(`Platinum Spine running on port ${PORT}`)

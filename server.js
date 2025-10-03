@@ -24,13 +24,20 @@ const memory = new MemoryLattice();
 const lsk = new LSKPlus();
 const hlc = new HLCOverlay(anchor, driftlock);
 
+// 🔑 Make these available to all routes
+app.locals.anchor = anchor;
+app.locals.driftlock = driftlock;
+app.locals.memory = memory;
+app.locals.lsk = lsk;
+app.locals.hlc = hlc;
+
 // Attach routes
 app.use('/api/core', coreRoutes);
 app.use('/api/heartbeat', heartbeatRoutes);
 app.use('/api/diagnostics', diagnosticsRoutes);
 app.use('/api/chat', chatRoutes);
 
-// Example of inline chat (kept for reference/testing)
+// Example inline chat (kept for quick testing)
 app.post('/api/chat-inline', (req, res) => {
   const { prompt } = req.body || {};
   if (!prompt) return res.status(400).json({ error: 'Missing prompt' });

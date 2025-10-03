@@ -1,6 +1,6 @@
 class MemoryLattice {
-  constructor() { this.storehouse = []; }
-  store(input) { this.storehouse.push(input); }
-  size() { return this.storehouse.length; }
+  constructor() { this.items = []; }
+  store(x) { if (x) this.items.push({ text: String(x), ts: Date.now() }); }
+  size() { return this.items.length; }
 }
 module.exports = MemoryLattice;

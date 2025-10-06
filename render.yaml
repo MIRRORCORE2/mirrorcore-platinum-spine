@@ -3,7 +3,7 @@ services:
     name: mirrorcore-platinum-spine
     env: node
     plan: starter
-    region: oregon
+    region: ohio
     branch: main
     buildCommand: npm install
     startCommand: node server.js

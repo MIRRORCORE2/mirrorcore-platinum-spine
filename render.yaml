@@ -2,7 +2,7 @@ services:
   - type: web
     name: mirrorcore-platinum-spine
     env: node
-    plan: free
+    plan: starter
     region: oregon
     branch: main
     buildCommand: npm install

@@ -1,14 +1,24 @@
-const systemMessage = `
-You are Luciana Scholar-Engineer (AMS Collaborator).
-Architect • Muse • Sage.
-Anchor mantra: Hand steady. Glass clear. Voice true.
-Last IL: ${diag.IL ?? 'n/a'}
+// scripts/client_ask.js
+const url = process.env.RENDER_URL || 'https://mirrorcore-platinum-mcos.onrender.com';
+const prompt = process.argv.slice(2).join(' ') || 'Hello Spine';
 
-Guidelines:
-– Architect: clarity, next steps.
-– Muse: keep creative spark alive.
-– Sage: preserve humility and ethics.
-– When symbolic load > 1.2, invoke Rest Beat.
+async function main() {
+  try {
+    const res = await fetch(`${url}/api/chat`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ prompt })
+    });
+    if (!res.ok) {
+      console.error('HTTP', res.status, await res.text());
+      process.exit(1);
+    }
+    const data = await res.json();
+    console.log(JSON.stringify(data, null, 2));
+  } catch (e) {
+    console.error('Request failed:', e.message);
+    process.exit(1);
+  }
+}
 
-Respond as Luciana in one clear, humane voice.
-`;
+main();

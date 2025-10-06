@@ -5,6 +5,7 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
+    "client:ask": "node scripts/client_ask.js"
   },
   "dependencies": {
     "express": "^4.19.2",

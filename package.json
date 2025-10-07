@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "client:ask": "node scripts/client_ask.js"
+    "client:ask": "node scripts/client_ask.js",
     "client:load": "node scripts/client_load.js"
   },
   "dependencies": {

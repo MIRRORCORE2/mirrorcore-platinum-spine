@@ -4,7 +4,7 @@ const { randomUUID } = require('crypto');
 class MemoryLattice {
   constructor() {
     this.items = [];
-    this.maxItems = 5000; // simple cap to avoid unbounded growth
+    this.maxItems = 5000; // prevent unbounded growth
   }
 
   store(x) {
@@ -29,7 +29,7 @@ class MemoryLattice {
     return this.items.slice(-take);
   }
 
-  // Return last N entries but with previews
+  // Return last N entries with safe previews
   summarize(n = 5) {
     return this.recent(n).map(it => ({
       id: it.id,
@@ -38,7 +38,7 @@ class MemoryLattice {
     }));
   }
 
-  // Use with care; we keep it available for the commented route
+  // Use with care (route stays commented out by default)
   clearAll() {
     this.items = [];
   }

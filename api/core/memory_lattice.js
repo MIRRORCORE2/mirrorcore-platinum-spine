@@ -1,11 +1,9 @@
-mkdir -p api/core
-cat > api/core/memory_lattice.js <<'JS'
 const { randomUUID } = require('crypto');
 
 class MemoryLattice {
   constructor() {
     this.items = [];
-    this.maxItems = 5000; // prevent unbounded growth
+    this.maxItems = 5000; // cap growth
   }
 
   store(x) {
@@ -43,4 +41,3 @@ class MemoryLattice {
 }
 
 module.exports = MemoryLattice;
-JS

@@ -1,9 +1,3 @@
-# 0) Inspect who broke package.json (optional)
-git log --oneline -- package.json
-git show HEAD:package.json | sed -n '1,40p'
-
-# 1) QUICK FIX: overwrite with valid JSON (no comments)
-cat > package.json <<'JSON'
 {
   "name": "mirrorcore-platinum-spine",
   "version": "1.0.0",

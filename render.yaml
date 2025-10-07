@@ -1,4 +1,4 @@
-# path: render.yaml  (safer defaults + healthcheck)
+# path: render.yaml
 services:
   - type: web
     name: mirrorcore-platinum-spine
@@ -9,14 +9,17 @@ services:
     buildCommand: npm ci
     startCommand: node server.js
     autoDeploy: true
+
     envVars:
       - key: NODE_ENV
         value: production
       - key: API_KEY
-        sync: false            # set in Render dashboard to enforce Bearer auth
+        sync: false              # optional: for Bearer auth if you add it later
       - key: MIRRORCORE_SECRET
         generateValue: true
-    healthCheckPath: /health
+
+    healthCheckPath: /api/heartbeat   # ✅ this is your real heartbeat route
+
     headers:
       - path: /*
         name: Cache-Control

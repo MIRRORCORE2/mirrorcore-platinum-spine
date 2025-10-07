@@ -1,6 +1,4 @@
-// scripts/client_load.js
-import fs from 'fs';
-import readline from 'readline';
+import fs from 'node:fs/promises';
 
 const BASE = process.env.RENDER_URL || 'https://mirrorcore-platinum-mcos.onrender.com';
 const file = process.argv[2];
@@ -9,47 +7,41 @@ if (!file) {
   process.exit(1);
 }
 
-const post = async (prompt) => {
-  const res = await fetch(`${BASE}/api/chat`, {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({ prompt })
-  });
+const fetchJson = async (url, opts) => {
+  const res = await fetch(url, opts);
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
-  const data = await res.json();
-  return data;
+  return res.json();
 };
 
-const rl = readline.createInterface({
-  input: fs.createReadStream(file),
-  crlfDelay: Infinity
-});
+const run = async () => {
+  const raw = await fs.readFile(file, 'utf8');
+  const lines = raw.split(/\r?\n/).filter(Boolean);
+  let ok = 0, fail = 0;
 
-let lineNo = 0;
-(async () => {
-  for await (const line of rl) {
-    lineNo++;
-    const trimmed = line.trim();
-    if (!trimmed) continue;
-    let prompt;
+  for (const line of lines) {
+    let payload;
     try {
-      const obj = JSON.parse(trimmed);
-      // Your JSONL lines look like: { "id": "MCQ-0005", "text": "..." }
-      if (obj.text) {
-        prompt = obj.id ? `${obj.id} — ${obj.text}` : obj.text;
-      } else {
-        // fallback: post raw line
-        prompt = trimmed;
-      }
-    } catch {
-      // not JSON? send raw line
-      prompt = trimmed;
+      const j = JSON.parse(line);
+      // store exactly what you send
+      payload = { prompt: `${j.id}  ${j.text}` };
+    } catch (e) {
+      console.error('Bad JSONL line:', line.slice(0,120));
+      fail++;
+      continue;
     }
     try {
-      const out = await post(prompt);
-      console.log(JSON.stringify({ line: lineNo, ok: true, id: (out.id||null), memorySize: out.memorySize, IL: out.IL }));
-    } catch (err) {
-      console.error(JSON.stringify({ line: lineNo, ok: false, error: err.message }));
+      await fetchJson(`${BASE}/api/chat`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      ok++;
+    } catch (e) {
+      console.error('Send failed:', e.message);
+      fail++;
     }
   }
-})();
+  console.log(JSON.stringify({ loaded: ok, failed: fail }, null, 2));
+};
+
+run().catch(e => { console.error(e); process.exit(1); });

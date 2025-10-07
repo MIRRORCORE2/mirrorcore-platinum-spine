@@ -1,47 +1,51 @@
-import fs from 'node:fs/promises';
+// scripts/client_load.js  (CommonJS)
+const fs = require('fs');
+const path = require('path');
 
 const BASE = process.env.RENDER_URL || 'https://mirrorcore-platinum-mcos.onrender.com';
-const file = process.argv[2];
-if (!file) {
-  console.error('Usage: node scripts/client_load.js <path-to-jsonl>');
+const inFile = process.argv[2];
+
+if (!inFile) {
+  console.error('Usage: node scripts/client_load.js <path/to/file.jsonl>');
   process.exit(1);
 }
 
-const fetchJson = async (url, opts) => {
-  const res = await fetch(url, opts);
+async function postLine(text) {
+  const res = await fetch(`${BASE}/api/chat`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ prompt: text })
+  });
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   return res.json();
-};
+}
 
-const run = async () => {
-  const raw = await fs.readFile(file, 'utf8');
-  const lines = raw.split(/\r?\n/).filter(Boolean);
-  let ok = 0, fail = 0;
+(async () => {
+  try {
+    const full = path.resolve(inFile);
+    const lines = fs.readFileSync(full, 'utf8')
+      .split(/\r?\n/)
+      .map(l => l.trim())
+      .filter(Boolean);
 
-  for (const line of lines) {
-    let payload;
-    try {
-      const j = JSON.parse(line);
-      // store exactly what you send
-      payload = { prompt: `${j.id}  ${j.text}` };
-    } catch (e) {
-      console.error('Bad JSONL line:', line.slice(0,120));
-      fail++;
-      continue;
+    let loaded = 0, failed = 0;
+    for (const line of lines) {
+      try {
+        // Accept either plain text or {"id": "...", "text": "..."}
+        let text = line;
+        if (line.startsWith('{') && line.endsWith('}')) {
+          const obj = JSON.parse(line);
+          text = obj.text ?? line;
+        }
+        await postLine(text);
+        loaded++;
+      } catch {
+        failed++;
+      }
     }
-    try {
-      await fetchJson(`${BASE}/api/chat`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-      ok++;
-    } catch (e) {
-      console.error('Send failed:', e.message);
-      fail++;
-    }
+    console.log(JSON.stringify({ loaded, failed }, null, 2));
+  } catch (err) {
+    console.error('Loader error:', err?.message || err);
+    process.exit(1);
   }
-  console.log(JSON.stringify({ loaded: ok, failed: fail }, null, 2));
-};
-
-run().catch(e => { console.error(e); process.exit(1); });
+})();

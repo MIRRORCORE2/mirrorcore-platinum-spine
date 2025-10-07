@@ -8,25 +8,12 @@
     "client:ask": "node scripts/client_ask.js",
     "client:load": "node scripts/client_load.js"
   },
-  "dependencies": {
-    "body-parser": "^1.20.3",
-    "cors": "^2.8.5",
-    "dotenv": "^16.6.1",
-    "express": "^4.21.2",
-    "helmet": "^7.1.0",
-    "morgan": "^1.10.0",
-    "node-fetch": "^3.3.2"
-  },
   "engines": {
     "node": ">=18 <23"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "body-parser": "^1.20.2",
+    "dotenv": "^16.4.5"
   }
 }
-JSON
-
-# 2) Refresh lockfile locally so Render installs exact versions
-npm install
-
-# 3) Commit & push
-git add package.json package-lock.json
-git commit -m "fix(package): remove comments; add cors/helmet/morgan deps"
-git push origin main

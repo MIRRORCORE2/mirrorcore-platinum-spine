@@ -1,4 +1,9 @@
-// path: package.json
+# 0) Inspect who broke package.json (optional)
+git log --oneline -- package.json
+git show HEAD:package.json | sed -n '1,40p'
+
+# 1) QUICK FIX: overwrite with valid JSON (no comments)
+cat > package.json <<'JSON'
 {
   "name": "mirrorcore-platinum-spine",
   "version": "1.0.0",
@@ -22,3 +27,12 @@
     "node": ">=18 <23"
   }
 }
+JSON
+
+# 2) Refresh lockfile locally so Render installs exact versions
+npm install
+
+# 3) Commit & push
+git add package.json package-lock.json
+git commit -m "fix(package): remove comments; add cors/helmet/morgan deps"
+git push origin main

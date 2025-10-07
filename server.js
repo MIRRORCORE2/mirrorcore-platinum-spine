@@ -23,6 +23,7 @@ const driftlock = new DriftLock(anchor);
 const memory = new MemoryLattice();
 const lsk = new LSKPlus();
 const hlc = new HLCOverlay(anchor, driftlock);
+const memoryRoutes = require('./routes/memory.js');
 
 // Expose to routes
 app.locals.anchor = anchor;
@@ -36,6 +37,7 @@ app.use('/api/core', coreRoutes);
 app.use('/api/heartbeat', heartbeatRoutes);
 app.use('/api/diagnostics', diagnosticsRoutes);
 app.use('/api/chat', chatRoutes);
+app.use('/api/memory', memoryRoutes);
 
 // Simple homepage so "/" works
 app.get('/', (req, res) => {

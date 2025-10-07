@@ -13,6 +13,7 @@ const coreRoutes = require('./routes/core.js');
 const heartbeatRoutes = require('./routes/heartbeat.js');
 const diagnosticsRoutes = require('./routes/diagnostics.js');
 const chatRoutes = require('./routes/chat.js');
+const memoryRoutes = require('./routes/memory.js'); // ✅ added and active
 
 const app = express();
 app.use(bodyParser.json());
@@ -23,7 +24,6 @@ const driftlock = new DriftLock(anchor);
 const memory = new MemoryLattice();
 const lsk = new LSKPlus();
 const hlc = new HLCOverlay(anchor, driftlock);
-const memoryRoutes = require('./routes/memory.js');
 
 // Expose to routes
 app.locals.anchor = anchor;
@@ -37,12 +37,13 @@ app.use('/api/core', coreRoutes);
 app.use('/api/heartbeat', heartbeatRoutes);
 app.use('/api/diagnostics', diagnosticsRoutes);
 app.use('/api/chat', chatRoutes);
-app.use('/api/memory', memoryRoutes);
+app.use('/api/memory', memoryRoutes); // ✅ wired up here
 
-// Simple homepage so "/" works
+// Simple homepage
 app.get('/', (req, res) => {
-  res.send('MirrorCore Platinum is online. Try /api/core, /api/diagnostics, /api/heartbeat, or POST /api/chat');
+  res.send('MirrorCore Platinum is online. Try /api/core, /api/diagnostics, /api/heartbeat, /api/memory, or POST /api/chat');
 });
 
+// Start server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Platinum Spine running on port ${PORT}`));

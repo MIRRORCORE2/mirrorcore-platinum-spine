@@ -2,8 +2,8 @@ const express = require('express');
 const router = express.Router();
 
 /**
- * GET /api/memory?limit=5  → last N entries (full text)
- * GET /api/memory/summary?limit=5 → summarized view (safe previews)
+ * GET /api/memory?limit=5        → last N entries (full text)
+ * GET /api/memory/summary?limit=5→ summarized view (safe previews)
  */
 router.get('/', (req, res) => {
   const { memory } = req.app.locals;
@@ -25,7 +25,7 @@ router.get('/summary', (req, res) => {
   });
 });
 
-// ⚠️ Dangerous — keep commented out unless you truly need it.
+// ⚠ Dangerous — keep commented unless you truly need it.
 /*
 router.post('/clear', (req, res) => {
   const { memory } = req.app.locals;

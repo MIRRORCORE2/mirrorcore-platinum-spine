@@ -1,32 +1,47 @@
+// api/core/memory_lattice.js
+const { randomUUID } = require('crypto');
+
 class MemoryLattice {
-  constructor() { this.items = []; }
+  constructor() {
+    this.items = [];
+    this.maxItems = 5000; // simple cap to avoid unbounded growth
+  }
 
   store(x) {
     if (!x) return;
-    this.items.push({
-      text: String(x),
+    const text = String(x);
+    const item = {
+      id: (typeof randomUUID === 'function') ? randomUUID() : String(Date.now()),
+      text,
       ts: Date.now()
-    });
+    };
+    this.items.push(item);
+    if (this.items.length > this.maxItems) this.items.shift();
   }
 
-  size() { return this.items.length; }
+  size() {
+    return this.items.length;
+  }
 
+  // Return the last N full entries (most recent last)
   recent(n = 5) {
-    const k = Math.max(0, Math.min(n, this.items.length));
-    return this.items.slice(-k).reverse(); // newest first
+    const take = Math.max(1, Math.min(Number(n) || 5, this.items.length));
+    return this.items.slice(-take);
   }
 
+  // Return last N entries but with previews
   summarize(n = 5) {
-    const rows = this.recent(n).map((it, i) => ({
-      idx: i + 1,
+    return this.recent(n).map(it => ({
+      id: it.id,
       ts: it.ts,
-      preview: it.text.length > 140 ? it.text.slice(0, 137) + '…' : it.text
+      preview: it.text.length > 200 ? it.text.slice(0, 200) + '…' : it.text
     }));
-    return { count: this.items.length, latest: rows };
   }
 
-  // optional: clear (disabled by default; uncomment route only if you really need it)
-  clearAll() { this.items = []; }
+  // Use with care; we keep it available for the commented route
+  clearAll() {
+    this.items = [];
+  }
 }
 
 module.exports = MemoryLattice;

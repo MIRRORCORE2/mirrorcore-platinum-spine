@@ -17,13 +17,11 @@ router.get('/summary', (req, res) => {
   return res.json({ ok: true, mode: 'summary', data: memory.summarize(limit) });
 });
 
-// ⚠️ Dangerous — keep commented unless you truly need it.
-/*
-router.post('/clear', (req, res) => {
-  const { memory } = req.app.locals;
-  memory.clearAll();
-  return res.json({ ok: true, cleared: true });
-});
-*/
+// ⚠ Keep disabled unless you truly need it.
+// router.post('/clear', (req, res) => {
+//   const { memory } = req.app.locals;
+//   memory.clearAll();
+//   return res.json({ ok: true, cleared: true });
+// });
 
 module.exports = router;

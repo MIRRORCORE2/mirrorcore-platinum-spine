@@ -1,4 +1,5 @@
-// api/core/memory_lattice.js
+mkdir -p api/core
+cat > api/core/memory_lattice.js <<'JS'
 const { randomUUID } = require('crypto');
 
 class MemoryLattice {
@@ -23,13 +24,11 @@ class MemoryLattice {
     return this.items.length;
   }
 
-  // Return the last N full entries (most recent last)
   recent(n = 5) {
     const take = Math.max(1, Math.min(Number(n) || 5, this.items.length));
     return this.items.slice(-take);
   }
 
-  // Return last N entries with safe previews
   summarize(n = 5) {
     return this.recent(n).map(it => ({
       id: it.id,
@@ -38,10 +37,10 @@ class MemoryLattice {
     }));
   }
 
-  // Use with care (route stays commented out by default)
   clearAll() {
     this.items = [];
   }
 }
 
 module.exports = MemoryLattice;
+JS

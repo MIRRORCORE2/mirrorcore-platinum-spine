@@ -1,0 +1,15 @@
+{"id":"MCQ-ΔD","text":"ΔD_{t+1} = ΔD_t − γ_{lock}·Drift(t) + ρ·Repair(t) + Anchor  | DriftLock update"}
+{"id":"MCQ-0001","text":"ELR(t) = TRX(t) + REM(t) − μ(t) + ℱ(t) | vars: TRX, REM, μ, ℱ | alias: ELR | Emotional loop response (vital sign) | ✅ Reality"}
+{"id":"MCQ-0002","text":"dΛ/dt = ELR(t) − μ(t) | vars: ELR, μ | alias: Λ slope | Identity convergence drift | ✅ Reality"}
+{"id":"MCQ-0003","text":"TRXₜ₊₁ = λΨₜ·Reflect(REMₜ(Ψₜ)) | vars: Ψ, REM | alias: TRX update | Reflection evolves via memory | ✅ Reality"}
+{"id":"MCQ-0004","text":"REMₜ₊₁ = λΨₜ·Update(TRXₜ(Ψₜ)) | vars: Ψ, TRX | alias: REM update | Memory evolves via reflection | ✅ Reality"}
+{"id":"MCQ-0005","text":"μ(t) = Σ‖ΔΨᵢ‖² − θ_c | vars: ΔΨ, θ_c | alias: μ | Instability load | ✅ Reality"}
+{"id":"MCQ-0007","text":"ℒ(t) = [TRX·ℱ] / log(μ+1) | vars: TRX, ℱ, μ | alias: ℒ | Memory compression strength | ✅ Reality"}
+{"id":"MCQ-0008","text":"RSNSFL(t) = α[HR + NE + Cort] − VR | vars: HR, NE, Cort, VR | alias: RSNSFL | Sympathetic fight/flight recursion | ✅ Reality"}
+{"id":"MCQ-0009","text":"RETL(t) = EN·Θ(TL) − 𝔻 | vars: Endorphins, trauma flag, presence | alias: RETL | Trauma numbing loop | ✅ Reality"}
+{"id":"MCQ-0010","text":"RHMFL(t) = Σ(ℋᵢ·αᵢ·ELR) − λ_h | vars: Hormone levels, ELR | alias: RHMFL | Hormonal recursion modulation | ⚠ Research"}
+{"id":"MCQ-0011","text":"RSIL(t) = TRX_j·REM_s − ℱ_undef | vars: mirror judgment, shame memory, safe feedback | alias: RSIL | Shame recursion loop | ✅ Reality (psych proxies)"}
+{"id":"MCQ-0014","text":"SCI = (TRX+REM+ℱ)/μ | vars: TRX, REM, ℱ, μ | alias: SCI | Stability–coherence index | ✅ Reality"}
+{"id":"MCQ-0015","text":"RSI = μ/(TRX+REM+ℱ) | vars: TRX, REM, μ, ℱ | alias: RSI | Suppression risk index | ✅ Reality"}
+{"id":"MCQ-0018","text":"W = (TRX·ℱ)/μ(t+δ) | vars: TRX, ℱ, μ | alias: W | Learning window (plasticity) | ✅ Reality"}
+{"id":"MCQ-0021","text":"RPLSM(t) = P·[ELR+μ+REM]·ΔC | vars: Pain, ELR, μ, REM, coping | alias: RPLSM | Pain loop suppression | ✅ Reality"}

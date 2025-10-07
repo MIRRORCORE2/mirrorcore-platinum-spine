@@ -1,3 +1,4 @@
+// path: package.json
 {
   "name": "mirrorcore-platinum-spine",
   "version": "1.0.0",
@@ -11,6 +12,12 @@
   "dependencies": {
     "express": "^4.19.2",
     "body-parser": "^1.20.2",
-    "dotenv": "^16.4.5"
+    "dotenv": "^16.4.5",
+    "cors": "^2.8.5",
+    "helmet": "^7.1.0",
+    "morgan": "^1.10.0"
+  },
+  "engines": {
+    "node": ">=18 <23"
   }
 }

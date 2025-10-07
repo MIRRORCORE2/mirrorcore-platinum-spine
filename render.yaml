@@ -1,3 +1,4 @@
+# path: render.yaml  (safer defaults + healthcheck)
 services:
   - type: web
     name: mirrorcore-platinum-spine
@@ -5,17 +6,17 @@ services:
     plan: starter
     region: ohio
     branch: main
-    buildCommand: npm install
+    buildCommand: npm ci
     startCommand: node server.js
     autoDeploy: true
     envVars:
       - key: NODE_ENV
         value: production
+      - key: API_KEY
+        sync: false            # set in Render dashboard to enforce Bearer auth
       - key: MIRRORCORE_SECRET
         generateValue: true
-      # If you later connect to a provider, uncomment:
-      # - key: OPENAI_API_KEY
-      #   sync: false
+    healthCheckPath: /health
     headers:
       - path: /*
         name: Cache-Control
